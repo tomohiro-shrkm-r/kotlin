@@ -54,7 +54,7 @@ object UnknownMissingCase : WhenMissingCase() {
 }
 
 val List<WhenMissingCase>.hasUnknown: Boolean
-    get() = any { it == UnknownMissingCase || it is ConditionTypeIsExpectMissingCase }
+    get() = firstOrNull() == WhenMissingCase.Unknown
 
 private interface WhenExhaustivenessChecker {
     fun getMissingCases(
