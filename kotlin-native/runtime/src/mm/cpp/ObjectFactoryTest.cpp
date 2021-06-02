@@ -13,6 +13,7 @@
 #include "gtest/gtest.h"
 
 #include "FinalizerHooksTestSupport.hpp"
+#include "Freezing.hpp"
 #include "ObjectTestSupport.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"
@@ -771,6 +772,29 @@ TEST(ObjectFactoryTest, CreateObject) {
     EXPECT_FALSE(node.IsArray());
     EXPECT_THAT(node.GetObjHeader(), object);
     EXPECT_THAT(node.GCObjectData().flags, 42);
+    EXPECT_FALSE(mm::IsFrozen(node.GetObjHeader()));
+
+    auto iter = objectFactory.Iter();
+    auto it = iter.begin();
+    EXPECT_THAT(*it, node);
+    ++it;
+    EXPECT_THAT(it, iter.end());
+}
+
+TEST(ObjectFactoryTest, CreateFrozenObject) {
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>().addFlag(TF_IMMUTABLE)};
+    GC::ThreadData gc;
+    ObjectFactory objectFactory;
+    ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
+
+    auto* object = threadQueue.CreateObject(type.typeInfo());
+    threadQueue.Publish();
+
+    auto node = ObjectFactory::NodeRef::From(object);
+    EXPECT_FALSE(node.IsArray());
+    EXPECT_THAT(node.GetObjHeader(), object);
+    EXPECT_THAT(node.GCObjectData().flags, 42);
+    EXPECT_TRUE(mm::IsFrozen(node.GetObjHeader()));
 
     auto iter = objectFactory.Iter();
     auto it = iter.begin();
@@ -791,6 +815,7 @@ TEST(ObjectFactoryTest, CreateObjectArray) {
     EXPECT_TRUE(node.IsArray());
     EXPECT_THAT(node.GetArrayHeader(), array);
     EXPECT_THAT(node.GCObjectData().flags, 42);
+    EXPECT_FALSE(mm::IsFrozen(node.GetArrayHeader()->obj()));
 
     auto iter = objectFactory.Iter();
     auto it = iter.begin();
@@ -811,6 +836,28 @@ TEST(ObjectFactoryTest, CreateCharArray) {
     EXPECT_TRUE(node.IsArray());
     EXPECT_THAT(node.GetArrayHeader(), array);
     EXPECT_THAT(node.GCObjectData().flags, 42);
+    EXPECT_FALSE(mm::IsFrozen(node.GetArrayHeader()->obj()));
+
+    auto iter = objectFactory.Iter();
+    auto it = iter.begin();
+    EXPECT_THAT(*it, node);
+    ++it;
+    EXPECT_THAT(it, iter.end());
+}
+
+TEST(ObjectFactoryTest, CreateString) {
+    GC::ThreadData gc;
+    ObjectFactory objectFactory;
+    ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
+
+    auto* array = threadQueue.CreateArray(theStringTypeInfo, 3);
+    threadQueue.Publish();
+
+    auto node = ObjectFactory::NodeRef::From(array);
+    EXPECT_TRUE(node.IsArray());
+    EXPECT_THAT(node.GetArrayHeader(), array);
+    EXPECT_THAT(node.GCObjectData().flags, 42);
+    EXPECT_TRUE(mm::IsFrozen(node.GetArrayHeader()->obj()));
 
     auto iter = objectFactory.Iter();
     auto it = iter.begin();
