@@ -956,6 +956,7 @@ tasks {
         if (kotlinBuildProperties.isTeamcityBuild) {
             doFirst {
                 println("##teamcity[setParameter name='bootstrap.kotlin.version' value='$bootstrapKotlinVersion']")
+                println("##teamcity[setParameter name='bootstrap.kotlin.plugin.version' value='asd']")
             }
         }
     }
