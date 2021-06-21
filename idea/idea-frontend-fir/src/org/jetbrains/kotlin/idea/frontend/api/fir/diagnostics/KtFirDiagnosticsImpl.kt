@@ -1768,6 +1768,15 @@ internal class CannotOverrideInvisibleMemberImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class DataClassOverrideConflictImpl(
+    override val overridingMember: KtCallableSymbol,
+    override val baseMember: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DataClassOverrideConflict(), KtAbstractFirDiagnostic<KtClassOrObject> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class CannotWeakenAccessPrivilegeImpl(
     override val overridingVisibility: Visibility,
     override val overridden: KtCallableSymbol,
