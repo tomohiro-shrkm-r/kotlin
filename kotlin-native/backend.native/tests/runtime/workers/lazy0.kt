@@ -77,6 +77,7 @@ fun testLiquidLazy() {
 
 @Test fun runTest() {
     assertEquals(42, Immutable.x)
+    assertEquals(Platform.memoryModel != MemoryModel.EXPERIMENTAL, Immutable2.y.isFrozen)
 
     val COUNT = 5
     val workers = Array(COUNT, { _ -> Worker.start()})

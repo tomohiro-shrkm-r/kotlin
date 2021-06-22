@@ -176,6 +176,10 @@ KNativePtr Kotlin_AtomicNativePtr_get(KRef thiz) {
 }
 
 void Kotlin_AtomicReference_checkIfFrozen(KRef value) {
+    // No need for a check with the new MM.
+    if (CurrentMemoryModel == MemoryModel::kExperimental)
+        return;
+
     if (value != nullptr && !isPermanentOrFrozen(value)) {
         ThrowInvalidMutabilityException(value);
     }

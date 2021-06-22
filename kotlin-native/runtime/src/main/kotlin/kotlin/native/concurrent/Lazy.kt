@@ -80,7 +80,13 @@ internal object INITIALIZING {
 
 @Frozen
 internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
-    private val initializer_ = AtomicReference<Function0<T>?>(initializer.freeze())
+    private val initializer_ = AtomicReference<Function0<T>?>(
+        if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+            initializer
+        } else {
+            initializer.freeze()
+        }
+    )
     private val value_ = AtomicReference<Any?>(UNINITIALIZED)
 
     override val value: T
@@ -89,7 +95,12 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
                 // We execute exclusively here.
                 val ctor = initializer_.value
                 if (ctor != null && initializer_.compareAndSet(ctor, null)) {
-                    value_.compareAndSet(INITIALIZING, ctor().freeze())
+                    val newValue = if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+                        ctor()
+                    } else {
+                        ctor().freeze()
+                    }
+                    value_.compareAndSet(INITIALIZING, newValue)
                 } else {
                     // Something wrong.
                     assert(false)

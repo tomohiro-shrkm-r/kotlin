@@ -75,18 +75,24 @@ fun test3(workers: Array<Worker>) {
 }
 
 fun test4() {
-    assertFailsWith<InvalidMutabilityException> {
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
         AtomicReference(Data(1))
-    }
-    assertFailsWith<InvalidMutabilityException> {
         AtomicReference<Data?>(null).compareAndSwap(null, Data(2))
+        AtomicReference<Data?>(null).value = Data(2)
+    } else {
+        assertFailsWith<InvalidMutabilityException> {
+            AtomicReference(Data(1))
+        }
+        assertFailsWith<InvalidMutabilityException> {
+            AtomicReference<Data?>(null).compareAndSwap(null, Data(2))
+        }
+        assertFailsWith<InvalidMutabilityException> {
+            AtomicReference<Data?>(null).value = Data(2)
+        }
     }
 }
 
 fun test5() {
-    assertFailsWith<InvalidMutabilityException> {
-        AtomicReference<Data?>(null).value = Data(2)
-    }
     val ref = AtomicReference<Data?>(null)
     val value = Data(3).freeze()
     assertEquals(null, ref.value)
@@ -111,11 +117,18 @@ fun test7() {
     ref.value = Array(1) { "po" }
     assertEquals(ref.value[0], "po")
     ref.freeze()
-    assertFailsWith<InvalidMutabilityException> {
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
         ref.value = Array(1) { "no" }
-    }
-    assertFailsWith<InvalidMutabilityException> {
+        assertEquals(ref.value[0], "no")
         ref.value[0] = "go"
+        assertEquals(ref.value[0], "go")
+    } else {
+        assertFailsWith<InvalidMutabilityException> {
+            ref.value = Array(1) { "no" }
+        }
+        assertFailsWith<InvalidMutabilityException> {
+            ref.value[0] = "go"
+        }
     }
     ref.value = Array(1) { "so" }.freeze()
     assertEquals(ref.value[0], "so")
