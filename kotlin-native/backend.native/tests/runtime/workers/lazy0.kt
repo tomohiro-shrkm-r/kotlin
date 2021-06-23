@@ -75,6 +75,17 @@ fun testLiquidLazy() {
         assertEquals(l2.value, 17)
 }
 
+fun testAtomicLazyFreeze() {
+    val x = Data(3, "abc")
+    val y by atomicLazy {
+        Data(4, x.y)
+    }
+    val z: Data = y
+    assertEquals(Platform.memoryModel != MemoryModel.EXPERIMENTAL, x.isFrozen)
+    assertEquals(Platform.memoryModel != MemoryModel.EXPERIMENTAL, y.isFrozen)
+    assertEquals(Platform.memoryModel != MemoryModel.EXPERIMENTAL, z.isFrozen)
+}
+
 @Test fun runTest() {
     assertEquals(42, Immutable.x)
     assertEquals(Platform.memoryModel != MemoryModel.EXPERIMENTAL, Immutable2.y.isFrozen)
@@ -84,6 +95,7 @@ fun testLiquidLazy() {
     testSingleData(workers)
     testFrozenLazy(workers)
     testLiquidLazy()
+    testAtomicLazyFreeze()
 
     println("OK")
 }
