@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -52,8 +53,10 @@ internal fun Context.psiToIr(
     // Note: using [llvmModuleSpecification] since this phase produces IR for generating single LLVM module.
 
     val exportedDependencies = (getExportedDependencies() + modulesWithoutDCE).distinct()
+    val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
     val functionIrClassFactory = BuiltInFictitiousFunctionIrClassFactory(
-            symbolTable, generatorContext.irBuiltIns, reflectionTypes)
+            symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
+    irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
     val stubGenerator = DeclarationStubGeneratorImpl(
             moduleDescriptor, symbolTable,
             config.configuration.languageVersionSettings

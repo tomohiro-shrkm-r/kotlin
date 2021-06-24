@@ -320,7 +320,7 @@ internal class KonanSymbols(
             val funSymbol = irBuiltIns.findFunctions(Name.identifier("copyInto"), StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
                     .single {
                         !it.owner.isExpect &&
-                                it.owner.extensionReceiverParameter?.type?.classOrNull == symbol.owner
+                                it.owner.extensionReceiverParameter?.type?.classOrNull == symbol
                     }
             symbol to funSymbol
         }.toMap()
@@ -412,7 +412,7 @@ internal class KonanSymbols(
     val kotlinResultGetOrThrow by lazy {
         irBuiltIns.findFunctions(Name.identifier("getOrThrow"))
                 .single {
-                    it.owner.extensionReceiverParameter?.type?.classOrNull == kotlinResult.owner
+                    it.owner.extensionReceiverParameter?.type?.classOrNull == kotlinResult
                 }
     }
 
