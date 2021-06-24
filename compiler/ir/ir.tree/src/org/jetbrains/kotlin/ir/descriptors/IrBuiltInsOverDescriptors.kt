@@ -47,7 +47,25 @@ class IrBuiltInsOverDescriptors(
 ) : IrBuiltIns() {
     override val languageVersionSettings = typeTranslator.languageVersionSettings
 
-    private val functionFactory = IrDescriptorBasedFunctionFactory(this, symbolTable)
+    private var _functionFactory: IrAbstractDescriptorBasedFunctionFactory? = null
+    var functionFactory: IrAbstractDescriptorBasedFunctionFactory
+        get() =
+            synchronized(this) {
+                if (_functionFactory == null) {
+                    _functionFactory = IrDescriptorBasedFunctionFactory(this, symbolTable)
+                }
+                _functionFactory!!
+            }
+        set(value) {
+            synchronized(this) {
+                if (_functionFactory != null) {
+                    error("functionFactory already set")
+                } else {
+                    _functionFactory = value
+                }
+            }
+        }
+
     override val irFactory: IrFactory = symbolTable.irFactory
 
     private val builtInsModule = builtIns.builtInsModule
