@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: a.kt
 interface A<in T> {}
 interface B<T> : A<Int> {}
@@ -16,28 +17,28 @@ interface BB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>BA1<Any>, BB1<!> {}
 
 // FILE: b.kt
 package x
-    interface AA1<out T> {}
-    interface AB1 : AA1<Int> {}
-    interface AB3 : AA1<Comparable<Int>> {}
-    interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
+interface AA1<out T> {}
+interface AB1 : AA1<Int> {}
+interface AB3 : AA1<Comparable<Int>> {}
+interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
 
 // FILE: c.kt
 package x2
-    interface AA1<out T> {}
-    interface AB1 : AA1<Any> {}
-    interface AB3 : AA1<Comparable<Int>> {}
-    interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
+interface AA1<out T> {}
+interface AB1 : AA1<Any> {}
+interface AB3 : AA1<Comparable<Int>> {}
+interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
 
 // FILE: d.kt
 package x3
-    interface AA1<in T> {}
-    interface AB1 : AA1<Any> {}
-    interface AB3 : AA1<Comparable<Int>> {}
-    interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
+interface AA1<in T> {}
+interface AB1 : AA1<Any> {}
+interface AB3 : AA1<Comparable<Int>> {}
+interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
 
 // FILE: e.kt
 package sx2
-    interface AA1<in T> {}
-    interface AB1 : AA1<Int> {}
-    interface AB3 : AA1<Comparable<Int>> {}
-    interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
+interface AA1<in T> {}
+interface AB1 : AA1<Int> {}
+interface AB3 : AA1<Comparable<Int>> {}
+interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
