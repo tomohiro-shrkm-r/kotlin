@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
@@ -202,7 +203,7 @@ internal fun Context.psiToIr(
         if (this.stdlibModule in modulesWithoutDCE)
             functionIrClassFactory.buildAllClasses()
         internalAbi.init(irModules.values + irModule!!)
-//        functionIrClassFactory.module = (modules.values + irModule!!).single { it.descriptor.isNativeStdlib() }
+        functionIrClassFactory.module = (modules.values + irModule!!).single { it.descriptor.isNativeStdlib() }
     }
 
     mainModule.files.forEach { it.metadata = KonanFileMetadataSource(mainModule) }
