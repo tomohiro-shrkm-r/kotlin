@@ -408,6 +408,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorExpression) {
             default("typeRef", "FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic))")
+            defaultNull("expression")
             useTypes(errorTypeRefImpl, coneStubDiagnosticType)
         }
 

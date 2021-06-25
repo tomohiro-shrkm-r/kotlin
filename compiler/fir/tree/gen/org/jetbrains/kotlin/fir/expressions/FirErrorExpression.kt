@@ -22,6 +22,7 @@ abstract class FirErrorExpression : FirExpression(), FirDiagnosticHolder {
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val diagnostic: ConeDiagnostic
+    abstract val expression: FirExpression?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorExpression(this, data)
 
@@ -30,6 +31,8 @@ abstract class FirErrorExpression : FirExpression(), FirDiagnosticHolder {
         transformer.transformErrorExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract fun replaceExpression(newExpression: FirExpression?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorExpression
 }
