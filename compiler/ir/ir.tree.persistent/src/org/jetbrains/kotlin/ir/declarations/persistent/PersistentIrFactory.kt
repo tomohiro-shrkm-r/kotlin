@@ -24,6 +24,7 @@ class PersistentIrFactory : IrFactory {
 
     override var stageController = StageController()
 
+    @Suppress("UNUSED_PARAMETER")
     fun currentSignature(declaration: IrDeclaration): IdSignature? = null
 
     override fun createAnonymousInitializer(
