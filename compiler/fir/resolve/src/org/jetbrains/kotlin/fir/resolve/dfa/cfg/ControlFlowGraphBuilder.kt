@@ -612,7 +612,7 @@ class ControlFlowGraphBuilder {
             lastNodes.push(it)
             addEdge(conditionExitNode, it)
         }
-        levelCounter += whenBranchIndices.top().getValue(whenBranch)
+        levelCounter += whenBranchIndices.topOrNull()?.getValue(whenBranch) ?: 0
         return conditionExitNode to branchEnterNode
     }
 
@@ -620,9 +620,9 @@ class ControlFlowGraphBuilder {
         levelCounter--
         val node = createWhenBranchResultExitNode(whenBranch)
         popAndAddEdge(node)
-        val whenExitNode = whenExitNodes.top()
-        addEdge(node, whenExitNode, propagateDeadness = false)
-        levelCounter -= whenBranchIndices.top().getValue(whenBranch)
+        val whenExitNode = whenExitNodes.topOrNull()
+        whenExitNode?.let { addEdge(node, it, propagateDeadness = false) }
+        levelCounter -= whenBranchIndices.topOrNull()?.getValue(whenBranch) ?: 0
         return node
     }
 
