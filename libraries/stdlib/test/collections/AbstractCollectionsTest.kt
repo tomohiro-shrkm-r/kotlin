@@ -6,6 +6,7 @@
 package test.collections
 
 import test.collections.behaviors.*
+import test.testOnNonJvm6
 import kotlin.test.*
 
 class AbstractCollectionsTest {
@@ -127,7 +128,9 @@ class AbstractCollectionsTest {
 
         assertEquals(listOf("ok", "element"), list)
 
-        assertFailsWith<IndexOutOfBoundsException> { list.addAll(-1, listOf()) }
+        testOnNonJvm6 {
+            assertFailsWith<IndexOutOfBoundsException> { list.addAll(-1, listOf()) }
+        }
 
         compare(list.storage, list) {
             listBehavior()

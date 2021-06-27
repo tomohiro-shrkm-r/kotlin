@@ -26,7 +26,7 @@ internal actual inline fun testOnNonJvm6And7(f: () -> Unit) {
         f()
     }
 }
-internal inline fun testOnJvm7AndAbove(f: () -> Unit) {
+internal actual inline fun testOnNonJvm6(f: () -> Unit) {
     if (!isJava6) {
         f()
     }
